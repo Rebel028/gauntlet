@@ -26,19 +26,6 @@ A sixth file, `skills/gauntlet/custom-adversary.md`, is a *template* — it live
 
 ## Install
 
-### Try it locally first
-
-```
-/plugin marketplace add /path/to/gauntlet-plugin
-/plugin install gauntlet@gauntlet-marketplace
-```
-
-Or point Claude Code straight at the directory while iterating:
-
-```
-claude --plugin-dir /path/to/gauntlet-plugin
-```
-
 ### From GitHub
 
 ```
