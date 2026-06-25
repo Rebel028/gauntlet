@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "gauntlet-marketplace",
+  "version": "1.0.0",
+  "description": "Marketplace for the gauntlet plugin: independent skeptic subagents that attack an idea from different angles before you commit.",
+  "owner": {
+    "name": "Rebel028",
+    "url": "https://github.com/Rebel028"
+  },
+  "plugins": [
+    {
+      "name": "gauntlet",
+      "description": "Run an idea or design through a gauntlet of independent skeptic subagents, each attacking from a different angle so the flaw surfaces before you commit.",
+      "source": "./",
+      "category": "development"
+    }
+  ]
+}

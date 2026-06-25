@@ -1,0 +1,6 @@
+**/.DS_Store
+**/thumbs.db
+**/.env
+.claude/
+.agents/
+skills-lock.json

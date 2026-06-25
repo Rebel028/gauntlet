@@ -1,0 +1,20 @@
+{
+  "name": "gauntlet",
+  "version": "1.0.0",
+  "description": "Run an idea or design through a gauntlet of independent skeptic subagents — formalist, practitioner, consumer-advocate, historian, threat-modeler — each attacking from a different angle so the flaw surfaces before you commit. For vetting one design, choosing between options, or pressure-testing anything irreversible.",
+  "author": {
+    "name": "Rebel028",
+    "url": "https://github.com/Rebel028"
+  },
+  "homepage": "https://github.com/Rebel028/gauntlet",
+  "repository": "https://github.com/Rebel028/gauntlet",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "decision-making",
+    "red-team",
+    "subagents",
+    "architecture",
+    "bias-check"
+  ]
+}
