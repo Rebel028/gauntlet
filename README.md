@@ -17,7 +17,7 @@ Most "get a second opinion" tools converge toward agreement. Gauntlet does the o
 
 ## The agents
 
-Five standing personas, each a read-only subagent (`Read, Grep, Glob` — they can ground critique in your code but never modify it):
+Five standing personas, each a **read-only** subagent — they can read code, grep/glob, and search the web (prior art, CVEs), but never write, edit, or run shell commands:
 
 | Agent | Angle |
 |---|---|
@@ -27,16 +27,21 @@ Five standing personas, each a read-only subagent (`Read, Grep, Glob` — they c
 | `gauntlet-historian` | Prior art — who tried this, why did it break? |
 | `gauntlet-threat-modeler` | Security — where's the abuse case, the blast radius? |
 
-A sixth file, `skills/gauntlet/custom-adversary.md`, is a *template* — it lives beside the skill rather than in `agents/`, so it never registers as an agent. Paste it into a `general-purpose` call to spin up a bespoke angle — a cost/FinOps lens, an accessibility lens, a compliance lens — when the standing five don't fit.
+A sixth file, `custom-adversary.md`, is a *template* — it ships beside the skill, never registering as an agent. Paste it into a one-off read-only subagent to spin up a bespoke angle — a cost/FinOps lens, an accessibility lens, a compliance lens — when the standing five don't fit.
 
 ## Install
 
-### From GitHub
+Gauntlet ships for five coding agents. Each agent's ready-to-install files live in its own top-level directory, all generated from one source (see [How it's built](#how-its-built)).
 
-```
-/plugin marketplace add Rebel028/gauntlet
-/plugin install gauntlet@gauntlet-marketplace
-```
+| Agent | Install |
+|---|---|
+| **Claude Code** | `/plugin marketplace add Rebel028/gauntlet` then `/plugin install gauntlet@gauntlet-marketplace` |
+| **Gemini CLI** | `gemini extensions install https://github.com/Rebel028/gauntlet` *(see caveat below)* |
+| **OpenCode** | copy `opencode/agents/` and `opencode/command/` into `~/.config/opencode/` (or your project's `.opencode/`) |
+| **Codex** | copy `codex/agents/` (→ `~/.codex/agents/`) and `codex/prompts/` (→ `~/.codex/prompts/`) |
+| **Cursor** | copy `cursor/agents/` and `cursor/commands/` into your project's `.cursor/` (or `~/.cursor/`) |
+
+> **Gemini caveat:** `gemini extensions install <url>` expects the extension manifest at the repo root, but here it lives under `gemini/`. Until that's split into its own repo/branch, install by cloning and pointing at the subdir: `git clone https://github.com/Rebel028/gauntlet && gemini extensions install ./gauntlet/gemini`, or copy `gemini/agents/` → `~/.gemini/agents/` and `gemini/commands/` → `~/.gemini/commands/` manually.
 
 ## Usage
 
@@ -52,17 +57,26 @@ Behind the scenes, the skill picks the 2–4 sharpest angles for your decision, 
 
 ## How it's built
 
+The persona bodies and orchestration text are **identical** across all five agents — only frontmatter, file format (markdown vs TOML), and directory differ. So there's one source of truth in `src/`, and a dependency-free Node script regenerates every agent's layout. No file is hand-duplicated.
+
 ```
-gauntlet-plugin/
-├── .claude-plugin/
-│   ├── plugin.json        # manifest
-│   └── marketplace.json   # single-plugin catalog
-├── agents/                # five skeptic subagents (registered at plugin root)
-└── skills/
-    └── gauntlet/
-        ├── SKILL.md            # the orchestration logic
-        └── custom-adversary.md # template for a bespoke angle (not registered)
+gauntlet/
+├── src/                        # the ONLY files humans edit
+│   ├── personas/*.md           #   five skeptic personas (neutral frontmatter + body)
+│   ├── custom-adversary.md     #   bespoke-angle template
+│   └── skill.md                #   orchestration; {{SPAWN}} placeholder per agent
+├── scripts/generate.mjs        # Node, no deps; `--check` fails on drift
+├── .github/workflows/build.yml # PRs: drift check · master: regenerate + commit
+│
+├── .claude-plugin/marketplace.json   # stays at repo root; source → ./claude
+├── claude/    .claude-plugin/plugin.json, agents/*.md, skills/gauntlet/{SKILL,custom-adversary}.md
+├── gemini/    gemini-extension.json, agents/*.md, commands/gauntlet.toml, custom-adversary.md
+├── opencode/  agents/*.md, command/gauntlet.md, custom-adversary.md
+├── codex/     agents/*.toml, prompts/gauntlet.md, custom-adversary.md
+└── cursor/    agents/*.md, commands/gauntlet.md, custom-adversary.md
 ```
+
+Everything under `claude/ gemini/ opencode/ codex/ cursor/` is **generated** — edit `src/`, run `node scripts/generate.mjs`, and all five trees update. CI does this automatically on push to `master`.
 
 ## Credits
 

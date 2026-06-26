@@ -11,7 +11,7 @@
     {
       "name": "gauntlet",
       "description": "Run an idea or design through a gauntlet of independent skeptic subagents, each attacking from a different angle so the flaw surfaces before you commit.",
-      "source": "./",
+      "source": "./claude",
       "category": "development"
     }
   ]

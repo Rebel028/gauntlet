@@ -40,14 +40,14 @@ When picking between options rather than vetting one, run each agent against all
 
 ## How to run it
 
-1. **Pick 2+ agents with DIFFERENT angles.** Not "one for / one against" — that's a weak debate. You want genuinely different optics so the attacks don't overlap. The five standing personas in `agents/` are all read-only (`Read, Grep, Glob`):
+1. **Pick 2+ agents with DIFFERENT angles.** Not "one for / one against" — that's a weak debate. You want genuinely different optics so the attacks don't overlap. The five standing personas are all read-only (they can ground critique in your code but never modify it):
    - `gauntlet-formalist` — structure, logic, invariants. Are the categories actually orthogonal?
    - `gauntlet-practitioner` — the year-one maintainer. What gets painful, who gets paged?
    - `gauntlet-consumer-advocate` — the downstream consumer (API client, on-call). What breaks for them?
    - `gauntlet-historian` — prior art. Who tried this and why did it break?
    - `gauntlet-threat-modeler` — security. Where's the abuse case, the blast radius?
 
-   No fit? Use the `custom-adversary` template (`custom-adversary.md`, alongside this skill) — a template you paste into a `general-purpose` call, not a registered agent.
+   No fit? Use the `custom-adversary` template (`custom-adversary.md`, alongside this skill) — a template you paste into a one-off read-only subagent, not a registered agent.
 
    **Pick angles that fit the decision.** A migration → formalist + practitioner + historian. An auth change → threat-modeler + consumer-advocate + formalist. Pick the 2–4 sharpest, not all six.
 
@@ -57,7 +57,7 @@ When picking between options rather than vetting one, run each agent against all
 
 4. **Spawn them in parallel, in one turn.** Independence is the whole point — the agents must not see each other's reasoning. Issue all the Task tool calls in a single block so they run concurrently and can't influence one another.
 
-5. Invoke each persona as its named subagent — `@agent-gauntlet-formalist`, or just name it and let Claude delegate. A bare delegation works because each agent's body already encodes its angle: "have gauntlet-threat-modeler attack this migration: <full context>". For a bespoke angle, spawn a `general-purpose` subagent with the custom-adversary template, restricted to `Read, Grep, Glob`.
+5. Invoke each persona as its named subagent — `@agent-gauntlet-formalist`, or just name it and let Claude delegate. A bare delegation works because each agent's body already encodes its angle: "have gauntlet-threat-modeler attack this migration: <full context>". For a bespoke angle, spawn a `general-purpose` subagent with the custom-adversary template, restricted to read-only tools (`Read, Grep, Glob, LSP, WebFetch, WebSearch`).
 
 ## After the agents report back
 

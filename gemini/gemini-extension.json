@@ -1,0 +1,5 @@
+{
+  "name": "gauntlet",
+  "version": "1.0.0",
+  "description": "Independent skeptic subagents that attack an idea from different angles before you commit. Provides the gauntlet-* subagents and the /gauntlet command."
+}

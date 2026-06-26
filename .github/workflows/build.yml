@@ -1,0 +1,35 @@
+name: build
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # PRs: fail if generated variants are out of sync with src/.
+      - name: Check for drift
+        if: github.event_name == 'pull_request'
+        run: node scripts/generate.mjs --check
+
+      # master: regenerate from src/ and commit any changes (deploy).
+      - name: Regenerate and commit
+        if: github.event_name == 'push'
+        run: |
+          node scripts/generate.mjs
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: regenerate agent variants from src/"
+            git push
+          fi
