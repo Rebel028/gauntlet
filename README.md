@@ -2,7 +2,12 @@
 
 Run an idea through a gauntlet of **independent skeptic subagents**, each attacking it from a different angle, so the flaw surfaces *before* you commit.
 
+<p align="center">
+  <img height="480" alt="gauntlet meme" src="https://github.com/user-attachments/assets/f0f4480e-4fb6-4285-8fa0-a4f646e00502" />
+</p>
+
 Most "get a second opinion" tools converge toward agreement. Gauntlet does the opposite: it spawns several agents that don't see each other's reasoning, each trying to break your idea on its own terms. When two of them independently land on the same flaw, that's signal — not noise.
+
 
 ## What it's for
 
