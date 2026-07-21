@@ -3,11 +3,18 @@ name: Release Gemini extension
 # Gemini CLI installs extensions from GitHub Releases. We ship dist/gemini/ as a
 # single generic archive with gemini-extension.json at the archive root, so
 # `gemini extensions install https://github.com/Rebel028/gauntlet` pulls it with
-# subagents + skill intact. Tag a release `vX.Y.Z` (matching src/meta.json version).
+# subagents + skill intact. Normally invoked by build.yml, which tags whatever
+# version src/meta.json declares; a manual `vX.Y.Z` tag push works too.
 on:
   push:
     tags:
       - "v*"
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag to release (passed by build.yml after it tags meta.json's version)
+        type: string
+        required: true
   workflow_dispatch:
 
 permissions:
@@ -18,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -28,4 +37,5 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: gauntlet.tar.gz

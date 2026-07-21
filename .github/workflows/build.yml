@@ -17,6 +17,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,3 +37,27 @@ jobs:
             git commit -m "chore: regenerate tool packages from src [skip ci]"
             git push
           fi
+      # Tag whatever version src/meta.json declares. Skips silently if that tag
+      # already exists, so only an actual version bump cuts a release.
+      - name: Tag version from meta.json
+        id: tag
+        run: |
+          TAG="v$(jq -r .version src/meta.json)"
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "$TAG already exists — no release"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Called directly rather than left to the tag push: tags pushed with the default
+  # GITHUB_TOKEN do not trigger workflows, so release.yml would never fire on its own.
+  release:
+    needs: build
+    if: needs.build.outputs.tag != ''
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.build.outputs.tag }}
+    permissions:
+      contents: write
