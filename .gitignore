@@ -1,6 +1,16 @@
 **/.DS_Store
 **/thumbs.db
 **/.env
-.claude/
-.agents/
+node_modules/
 skills-lock.json
+docs/
+
+# Local tooling + project-mode install targets (build/install artifacts, never committed).
+# Exception: .agents/plugins/ holds the generated Codex marketplace pointer, which IS committed.
+.claude/
+.opencode/
+.gemini/
+.cursor/
+.codex/
+/.agents/*
+!/.agents/plugins/

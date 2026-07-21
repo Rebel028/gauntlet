@@ -1,6 +1,6 @@
 # Custom-Adversary Agent (template — not a registered subagent)
 
-> A template, not a live agent — no `name` frontmatter, so Claude won't auto-delegate to it. Use it by copying the skeleton into a `general-purpose` call (restricted to `Read, Grep, Glob`), or promote it to `agents/gauntlet-<angle>.md` with proper frontmatter mirroring the five standing agents.
+> A template, not a live agent — no `name` frontmatter, so no tool will auto-delegate to it. Use it by copying the skeleton into a generic subagent call (restricted to read-only tools), or promote it to a standing agent alongside the five personas with proper frontmatter.
 
 Use when none of the five standing personas fit and you need a bespoke angle. Fill in the brackets before spawning.
 

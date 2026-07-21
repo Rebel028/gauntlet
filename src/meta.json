@@ -1,0 +1,46 @@
+{
+  "name": "gauntlet",
+  "version": "1.1.0",
+  "description": "Run an idea or design through a gauntlet of independent skeptic subagents — formalist, practitioner, consumer-advocate, historian, threat-modeler — each attacking from a different angle so the flaw surfaces before you commit. For vetting one design, choosing between options, or pressure-testing anything irreversible.",
+  "author": { "name": "Rebel028", "url": "https://github.com/Rebel028" },
+  "homepage": "https://github.com/Rebel028/gauntlet",
+  "repository": "https://github.com/Rebel028/gauntlet",
+  "license": "MIT",
+  "keywords": ["code-review", "decision-making", "red-team", "subagents", "architecture", "bias-check"],
+  "skill": {
+    "name": "gauntlet",
+    "description": "Spawn independent skeptic subagents that attack a candidate idea or design from different angles, so the flaw surfaces before you commit. Propose it proactively when you're torn between solutions and can't pick, when you're stuck or going in circles, when you like your own idea a bit too much (confirmation-bias risk), or before anything irreversible — a lint/CI rule, DB schema or migration, API contract, IaC/k8s config, or auth boundary — but ask permission before running. Run it without asking when the user explicitly calls \"/gauntlet\", asks to attack/stress-test/red-team an idea, or asks to decide between options."
+  },
+  "agents": [
+    {
+      "slug": "formalist",
+      "name": "gauntlet-formalist",
+      "color": "blue",
+      "description": "Adversarial reviewer that attacks an idea on structure, logic, and invariants. Use proactively within gauntlet to find where a design's categories overlap, where an invariant breaks, or where a rule has undefined cases. Read-only; never modifies code."
+    },
+    {
+      "slug": "practitioner",
+      "name": "gauntlet-practitioner",
+      "color": "orange",
+      "description": "Adversarial reviewer that attacks an idea from the perspective of whoever maintains it for a year. Use proactively within gauntlet to surface maintenance burden, migration cost, paging/diagnosis pain, and whether people will route around the design instead of respecting it. Read-only; never modifies code."
+    },
+    {
+      "slug": "consumer-advocate",
+      "name": "gauntlet-consumer-advocate",
+      "color": "green",
+      "description": "Adversarial reviewer that attacks an idea from the perspective of whoever consumes it downstream — API client, library user, next service, on-call responder. Use proactively within gauntlet to find surprising behavior, silent contract breaks, illegible failures, and punished-but-reasonable usage. Read-only; never modifies code."
+    },
+    {
+      "slug": "historian",
+      "name": "gauntlet-historian",
+      "color": "purple",
+      "description": "Adversarial reviewer that attacks an idea with prior art. Use proactively within gauntlet to name the known anti-pattern an idea resembles, the standard reason that class of thing fails, and the battle-tested alternative the author skipped. Read-only; never modifies code."
+    },
+    {
+      "slug": "threat-modeler",
+      "name": "gauntlet-threat-modeler",
+      "color": "red",
+      "description": "Adversarial reviewer that attacks an idea as an adversary and as the owner of the blast radius. Use proactively within gauntlet to find trust-boundary violations, abuse cases, side channels, over-grants, and fail-open defaults. Read-only; never modifies code."
+    }
+  ]
+}
