@@ -17,7 +17,6 @@
     "bin",
     "scripts",
     "src",
-    "install.sh",
     "INSTALL.md"
   ],
   "license": "MIT",

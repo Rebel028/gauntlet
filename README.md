@@ -17,8 +17,6 @@ Most "get a second opinion" tools converge toward agreement. Gauntlet does the o
 
 Works in **Claude Code, Codex, Gemini CLI, Cursor, and Opencode** — from one source.
 
----
-
 ## What it's for
 
 - **Choosing between candidate solutions** when you can't cleanly pick — run each option through, see which survives the most attacks.
@@ -45,23 +43,25 @@ Need a different angle? `custom-adversary.md` (beside the skill) is a template �
 
 Paste this to any coding agent (Claude Code, Codex, Gemini CLI, Cursor, Opencode):
 
-> Read https://raw.githubusercontent.com/Rebel028/gauntlet/master/INSTALL.md and install gauntlet for the tool you're running in.
+```
+Read https://raw.githubusercontent.com/Rebel028/gauntlet/master/INSTALL.md and install gauntlet for the tool you're running in.
+```
 
 ## Do it yourself
 
 ### Helper script
 
-Full matrix in **[INSTALL.md](./INSTALL.md)**. The short version — no clone needed:
+Full matrix in **[INSTALL.md](./INSTALL.md)**. The short version — no clone needed, runs via `npx`:
 
 ```bash
-# interactive mode (read the script first if piping to a shell makes you nervous)
-curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh | bash
+# interactive picker
+npx -y github:Rebel028/gauntlet
 
 # all five tools
-curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh | bash -s -- --all
+npx -y github:Rebel028/gauntlet --all
 
 # or a single tool
-curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh | bash -s -- --codex
+npx -y github:Rebel028/gauntlet --codex
 ```
 
 ### Claude Code
@@ -101,8 +101,7 @@ gauntlet/
 ├── scripts/build.mjs        # generator: src/ -> dist/<tool>/
 ├── dist/                    # GENERATED — do not hand-edit
 │   ├── claude/  cursor/  gemini/  opencode/  codex/
-├── bin/install.js           # uniform file-copy installer
-├── install.sh               # thin bootstrap for install.js
+├── bin/install.js           # uniform file-copy installer (run via npx)
 ├── .claude-plugin/          # root marketplace pointer (Claude)
 └── .agents/plugins/         # root marketplace pointer (Codex)
 ```

@@ -17,24 +17,24 @@ Requirements: Node.js ≥ 18 (for the helper) and `git` (for native Codex/Gemini
 
 ### Install command per tool
 
-The helper needs no clone — it fetches and runs via `npx`. `bash -s --` passes flags through the pipe.
+The helper needs no clone — `npx` fetches and runs it straight from GitHub.
 
 | Tool | Recommended (helper, no clone) | Native alternative |
 |---|---|---|
-| **Claude Code** | `curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh \| bash -s -- --claude --user` | In-CLI: `/plugin marketplace add Rebel028/gauntlet` then `/plugin install gauntlet@gauntlet-marketplace` |
-| **Codex** | `curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh \| bash -s -- --codex --user` | `codex plugin marketplace add Rebel028/gauntlet` then `/plugins` → install (skill only; the helper also copies the `.toml` agents) |
-| **Gemini CLI** | `curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh \| bash -s -- --gemini --user` | `gemini extensions install https://github.com/Rebel028/gauntlet` (pulls the latest GitHub Release) |
-| **Cursor** | `curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh \| bash -s -- --cursor --user` | none — file copy only |
-| **Opencode** | `curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh \| bash -s -- --opencode --user` | none — file copy only |
+| **Claude Code** | `npx -y github:Rebel028/gauntlet --claude --user` | In-CLI: `/plugin marketplace add Rebel028/gauntlet` then `/plugin install gauntlet@gauntlet-marketplace` |
+| **Codex** | `npx -y github:Rebel028/gauntlet --codex --user` | `codex plugin marketplace add Rebel028/gauntlet` then `/plugins` → install (skill only; the helper also copies the `.toml` agents) |
+| **Gemini CLI** | `npx -y github:Rebel028/gauntlet --gemini --user` | `gemini extensions install https://github.com/Rebel028/gauntlet` (pulls the latest GitHub Release) |
+| **Cursor** | `npx -y github:Rebel028/gauntlet --cursor --user` | none — file copy only |
+| **Opencode** | `npx -y github:Rebel028/gauntlet --opencode --user` | none — file copy only |
 
-Install for everything at once: `... | bash -s -- --all --user`.
+Install for everything at once: `npx -y github:Rebel028/gauntlet --all --user`.
 
 ### Notes for the agent
 
 - The command is **non-interactive** with flags — safe to run unattended. Add `--dry-run` first to show the plan without writing.
 - **Codex agents:** `codex plugin ...` installs only the skill (Codex plugins can't ship agents). The helper (`--codex`) additionally copies the five `.toml` agents into `~/.codex/agents/`. Run the helper if the user wants the named agents.
 - **Gemini native** requires a published GitHub Release; if it fails, fall back to the helper.
-- Don't pipe to a shell if the user has said not to — instead clone and run `node bin/install.js --<tool> --user` (see below).
+- Don't run `npx` if the user has said not to — instead clone and run `node bin/install.js --<tool> --user` (see below).
 
 ### Verify / uninstall
 
@@ -43,7 +43,7 @@ Install for everything at once: `... | bash -s -- --all --user`.
 node bin/install.js --list                 # show target dirs per tool/scope
 node bin/install.js --all --user --uninstall
 # via helper (no clone):
-curl -fsSL https://raw.githubusercontent.com/Rebel028/gauntlet/master/install.sh | bash -s -- --all --uninstall
+npx -y github:Rebel028/gauntlet --all --uninstall
 ```
 
 Uninstall removes the `gauntlet-*` agent files and the `skills/gauntlet/` dir; other config is untouched.
@@ -63,17 +63,17 @@ Uninstall removes the `gauntlet-*` agent files and the `skills/gauntlet/` dir; o
 | `--uninstall` | remove gauntlet files |
 | `--help` | usage |
 
-No flags → interactive checkbox picker (needs a TTY; not available through a `curl | bash` pipe).
+No flags → interactive checkbox picker (needs a TTY; run `npx -y github:Rebel028/gauntlet` directly, not piped).
 
 ---
 
-## For humans — no pipe, no npx
+## For humans — from a clone
 
 ```bash
 git clone https://github.com/Rebel028/gauntlet
 cd gauntlet
-./install.sh                       # interactive picker
-node bin/install.js --cursor --user   # or explicit flags (dependency-free)
+node bin/install.js                    # interactive picker
+node bin/install.js --cursor --user    # or explicit flags (dependency-free)
 ```
 
 ### Manual copy (no script)
