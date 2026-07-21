@@ -1,0 +1,31 @@
+name: Release Gemini extension
+
+# Gemini CLI installs extensions from GitHub Releases. We ship dist/gemini/ as a
+# single generic archive with gemini-extension.json at the archive root, so
+# `gemini extensions install https://github.com/Rebel028/gauntlet` pulls it with
+# subagents + skill intact. Tag a release `vX.Y.Z` (matching src/meta.json version).
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Generate dist/
+        run: node scripts/build.mjs
+      - name: Package Gemini extension (manifest at archive root)
+        run: tar -czf gauntlet.tar.gz -C dist/gemini .
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: gauntlet.tar.gz

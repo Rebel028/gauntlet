@@ -1,18 +1,19 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "gauntlet-marketplace",
-  "version": "1.0.0",
-  "description": "Marketplace for the gauntlet plugin.",
-  "owner": {
-    "name": "Rebel028",
-    "url": "https://github.com/Rebel028"
-  },
   "plugins": [
     {
       "name": "gauntlet",
       "description": "Run an idea or design through a gauntlet of independent skeptic subagents — formalist, practitioner, consumer-advocate, historian, threat-modeler — each attacking from a different angle so the flaw surfaces before you commit. For vetting one design, choosing between options, or pressure-testing anything irreversible.",
-      "source": "./dist/claude",
-      "category": "development"
+      "category": "development",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Rebel028/gauntlet.git",
+        "path": "./dist/codex",
+        "ref": "master"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      }
     }
   ]
 }

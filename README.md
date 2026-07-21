@@ -1,13 +1,21 @@
-# Gauntlet
+```
+     ██████╗  █████╗ ██╗   ██╗███╗   ██╗████████╗██╗     ███████╗████████╗
+    ██╔════╝ ██╔══██╗██║   ██║████╗  ██║╚══██╔══╝██║     ██╔════╝╚══██╔══╝
+    ██║  ███╗███████║██║   ██║██╔██╗ ██║   ██║   ██║     █████╗     ██║   
+    ██║   ██║██╔══██║██║   ██║██║╚██╗██║   ██║   ██║     ██╔══╝     ██║   
+    ╚██████╔╝██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗███████╗   ██║   
+     ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝  
+```
 
 Run an idea through a gauntlet of **independent skeptic subagents**, each attacking it from a different angle, so the flaw surfaces *before* you commit.
 
 <p align="center">
-  <img height="480" alt="gauntlet meme" src="https://github.com/user-attachments/assets/f0f4480e-4fb6-4285-8fa0-a4f646e00502" />
+  <img height="360" alt="gauntlet meme" src="https://github.com/user-attachments/assets/f0f4480e-4fb6-4285-8fa0-a4f646e00502" />
 </p>
 
 Most "get a second opinion" tools converge toward agreement. Gauntlet does the opposite: it spawns several agents that don't see each other's reasoning, each trying to break your idea on its own terms. When two of them independently land on the same flaw, that's signal — not noise.
 
+Works in **Claude Code, Codex, Gemini CLI, Cursor, and Opencode** — from one source.
 
 ## What it's for
 
@@ -17,7 +25,7 @@ Most "get a second opinion" tools converge toward agreement. Gauntlet does the o
 
 ## The agents
 
-Five standing personas, each a read-only subagent (`Read, Grep, Glob` — they can ground critique in your code but never modify it):
+Five standing personas, each a read-only subagent — they can ground critique in your code but never modify it:
 
 | Agent | Angle |
 |---|---|
@@ -27,18 +35,48 @@ Five standing personas, each a read-only subagent (`Read, Grep, Glob` — they c
 | `gauntlet-historian` | Prior art — who tried this, why did it break? |
 | `gauntlet-threat-modeler` | Security — where's the abuse case, the blast radius? |
 
-A sixth file, `skills/gauntlet/custom-adversary.md`, is a *template* — it lives beside the skill rather than in `agents/`, so it never registers as an agent. Paste it into a `general-purpose` call to spin up a bespoke angle — a cost/FinOps lens, an accessibility lens, a compliance lens — when the standing five don't fit.
+Need a different angle? `custom-adversary.md` (beside the skill) is a template — paste it into a generic read-only subagent to spin up a bespoke lens (cost/FinOps, accessibility, compliance…).
 
-## Install
+# Installation
 
-### From GitHub
+## Let your agent install it
+
+Paste this to any coding agent (Claude Code, Codex, Gemini CLI, Cursor, Opencode):
+
+```
+Read https://raw.githubusercontent.com/Rebel028/gauntlet/master/INSTALL.md and install gauntlet for the tool you're running in.
+```
+
+## Do it yourself
+
+### Helper script
+
+Full matrix in **[INSTALL.md](./INSTALL.md)**. The short version — no clone needed, runs via `npx`:
+
+```bash
+# interactive picker
+npx -y github:Rebel028/gauntlet
+
+# all five tools
+npx -y github:Rebel028/gauntlet --all
+
+# or a single tool
+npx -y github:Rebel028/gauntlet --codex
+```
+
+### Claude Code
 
 ```
 /plugin marketplace add Rebel028/gauntlet
 /plugin install gauntlet@gauntlet-marketplace
 ```
 
-## Usage
+### Gemini CLI
+```
+gemini extensions install https://github.com/Rebel028/gauntlet
+```
+
+# Usage
 
 Invoke it explicitly:
 
@@ -52,23 +90,30 @@ Behind the scenes, the skill picks the 2–4 sharpest angles for your decision, 
 
 ## How it's built
 
+One canonical source in `src/`; a zero-dependency Node generator emits a native package per tool into `dist/`.
+
 ```
-gauntlet-plugin/
-├── .claude-plugin/
-│   ├── plugin.json        # manifest
-│   └── marketplace.json   # single-plugin catalog
-├── agents/                # five skeptic subagents (registered at plugin root)
-└── skills/
-    └── gauntlet/
-        ├── SKILL.md            # the orchestration logic
-        └── custom-adversary.md # template for a bespoke angle (not registered)
+gauntlet/
+├── src/                     # SINGLE SOURCE OF TRUTH — edit here
+│   ├── meta.json            #   plugin/skill/agent metadata (descriptions live here)
+│   ├── agents/*.md          #   the 5 agent bodies (system prompts)
+│   └── skill/               #   SKILL.md + custom-adversary.md
+├── scripts/build.mjs        # generator: src/ -> dist/<tool>/
+├── dist/                    # GENERATED — do not hand-edit
+│   ├── claude/  cursor/  gemini/  opencode/  codex/
+├── bin/install.js           # uniform file-copy installer (run via npx)
+├── .claude-plugin/          # root marketplace pointer (Claude)
+└── .agents/plugins/         # root marketplace pointer (Codex)
 ```
+
+Edit a prompt or description once in `src/`, run `npm run build`, and every tool's files update together. CI (`.github/workflows/build.yml`) regenerates `dist/` on every push to `src/`.
+
+**Adding a tool or changing a format?** It's all in `scripts/build.mjs` — one `agentFm.<tool>` entry per format.
 
 ## Credits
 
-The original concept and the first draft — a Russian-language `skeptic-agents` skill — were written by [@Tellexxii](https://github.com/Tellexxii). This plugin is the English rewrite and repackaging of that idea: restructured around real read-only subagents, trimmed, and shipped as an installable Claude Code plugin.
+The original concept and the first draft — a `skeptic-agents` skill — were written by [@Tellexxii](https://github.com/Tellexxii). This project is the rewrite and repackaging of that idea: restructured around real read-only subagents, trimmed, and shipped across five agent tools.
 
 ## License
 
 MIT
-

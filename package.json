@@ -1,0 +1,28 @@
+{
+  "name": "gauntlet",
+  "version": "1.1.0",
+  "description": "Independent skeptic subagents that attack an idea from different angles — packaged for Claude, Codex, Gemini CLI, Cursor, and Opencode.",
+  "type": "module",
+  "bin": {
+    "gauntlet-install": "./bin/install.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "scripts",
+    "src",
+    "INSTALL.md"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Rebel028",
+    "url": "https://github.com/Rebel028"
+  },
+  "repository": "https://github.com/Rebel028/gauntlet"
+}
