@@ -62,7 +62,12 @@ npx -y github:Rebel028/gauntlet --all
 
 # or a single tool
 npx -y github:Rebel028/gauntlet --codex
+
+# verify a global installation against the current repository version
+npx -y github:Rebel028/gauntlet --codex --user --verify
 ```
+
+Verification is read-only and exits nonzero when an installed file is missing or differs. Pin a release, for example `github:Rebel028/gauntlet#v1.2.0`, to verify against that exact version. See [INSTALL.md](./INSTALL.md) for project-local and all-tool examples.
 
 ### Claude Code
 
