@@ -5,12 +5,13 @@
 //   Flags (no flags => interactive TUI):
 //     tools:  --claude --codex --gemini --cursor --opencode   (repeatable)  | --all
 //     scope:  --project (./ in CWD)  |  --user (~ global)
-//     misc:   --list  --dry-run  --uninstall  --help
+//     misc:   --list  --dry-run  --verify  --uninstall  --help
 //
 // Flag mode is dependency-free. Interactive mode uses @clack/prompts (installed
 // automatically when run via `npx github:Rebel028/gauntlet`).
 
-import { cpSync, rmSync, existsSync, mkdirSync, readdirSync } from "node:fs";
+import { cpSync, rmSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import os from "node:os";
@@ -67,6 +68,58 @@ function doInstall(tools, scope, { dryRun = false, uninstall = false } = {}) {
   if (!dryRun) console.log(`\n${uninstall ? "removed" : "installed"} ${n} item(s). ${uninstall ? "" : "Restart the tool / reload to pick them up."}`);
 }
 
+const hash = (p) => createHash("sha256").update(readFileSync(p)).digest("hex");
+
+function filesUnder(root, relative = "") {
+  const dir = join(root, relative);
+  const files = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const rel = join(relative, entry.name);
+    if (entry.isDirectory()) files.push(...filesUnder(root, rel));
+    else if (entry.isFile()) files.push(rel);
+  }
+  return files;
+}
+
+function verifyInstall(tools, scope) {
+  if (!existsSync(DIST)) fail("dist/ not found — reinstall the package or run `npm run build` first.");
+  let failures = 0;
+  for (const tool of tools) {
+    console.log(`\nverifying ${tool} (${scope}):`);
+    for (const op of plan(tool, scope)) {
+      if (statSync(op.src).isDirectory()) {
+        const expected = new Set(filesUnder(op.src));
+        for (const rel of expected) failures += verifyFile(join(op.src, rel), join(op.dest, rel));
+        if (existsSync(op.dest)) {
+          for (const rel of filesUnder(op.dest)) {
+            if (!expected.has(rel)) {
+              console.log(`  modified ${tilde(join(op.dest, rel))} (unexpected file)`);
+              failures++;
+            }
+          }
+        }
+      } else {
+        failures += verifyFile(op.src, op.dest);
+      }
+    }
+  }
+  console.log(`\n${failures ? `verification failed: ${failures} problem(s)` : "verification passed"}`);
+  if (failures) process.exitCode = 1;
+}
+
+function verifyFile(src, dest) {
+  if (!existsSync(dest)) {
+    console.log(`  missing  ${tilde(dest)}`);
+    return 1;
+  }
+  if (!statSync(dest).isFile() || hash(src) !== hash(dest)) {
+    console.log(`  modified ${tilde(dest)}`);
+    return 1;
+  }
+  console.log(`  ok       ${tilde(dest)}`);
+  return 0;
+}
+
 function listAll() {
   for (const tool of TOOLS) {
     console.log(`\n${tool}:`);
@@ -85,7 +138,7 @@ const HELP = `gauntlet installer
 
   tools:  --claude --codex --gemini --cursor --opencode   (repeatable) | --all
   scope:  --project (repo-local)  |  --user (global, default)
-  options: --list  --dry-run  --uninstall  --help
+  options: --list  --dry-run  --verify  --uninstall  --help
 
   No tool flags -> interactive picker.`;
 
@@ -116,15 +169,26 @@ async function interactive({ uninstall }) {
 // ── args ──
 const argv = process.argv.slice(2);
 const has = (f) => argv.includes(f);
+const known = new Set(["--claude", "--codex", "--gemini", "--cursor", "--opencode", "--all", "--user", "--project", "--list", "--dry-run", "--verify", "--uninstall", "--help", "-h"]);
+const unknown = argv.filter((arg) => !known.has(arg));
+if (unknown.length) fail(`unknown option(s): ${unknown.join(", ")}`);
+if (has("--user") && has("--project")) fail("choose only one scope: --user or --project");
+if (has("--all") && TOOLS.some((tool) => has(`--${tool}`))) fail("use --all or individual tool flags, not both");
 if (has("--help") || has("-h")) { console.log(HELP); process.exit(0); }
 if (has("--list")) { listAll(); process.exit(0); }
 
 const scope = has("--project") ? "project" : "user";
 const uninstall = has("--uninstall");
 const dryRun = has("--dry-run");
+const verify = has("--verify");
 let tools = has("--all") ? TOOLS : TOOLS.filter((t) => has(`--${t}`));
 
-if (!tools.length) {
+if (verify && (uninstall || dryRun)) fail("--verify cannot be combined with --uninstall or --dry-run");
+if (verify && !tools.length) fail("--verify requires a tool flag or --all");
+
+if (verify) {
+  verifyInstall(tools, scope);
+} else if (!tools.length) {
   await interactive({ uninstall });
 } else {
   doInstall(tools, scope, { dryRun, uninstall });

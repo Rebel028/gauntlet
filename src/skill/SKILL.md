@@ -23,7 +23,7 @@ When picking between options rather than vetting one, run each agent against all
 
 3. **Do NOT hint at the conclusion you want.** Never write "confirm that X is good." Write "attack X, find where it breaks." A skeptic agent that's been told the desired answer is useless.
 
-4. **Spawn them in parallel, in one message.** Independence is the whole point — the agents must not see each other's reasoning. Invoke each persona as its named subagent (each agent's body already encodes its angle: "have gauntlet-threat-modeler attack this migration: <full context>"), and issue all the subagent calls in a single message so they run concurrently and can't influence one another. If your tool can't register named subagents, spawn generic read-only subagents and paste each persona's angle inline (see `custom-adversary.md`).
+4. **Spawn them concurrently and independently.** Dispatch every selected agent before awaiting any result, and never include one agent's output in another agent's prompt. Invoke each persona as its named subagent (each agent's body already encodes its angle: "have gauntlet-threat-modeler attack this migration: <full context>"). If your tool can't register named subagents, spawn generic read-only subagents and paste each persona's angle inline (see `custom-adversary.md`).
 
 ## After the agents report back
 
