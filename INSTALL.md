@@ -41,12 +41,16 @@ Install for everything at once: `npx -y github:Rebel028/gauntlet --all --user`.
 ```bash
 # from a clone:
 node bin/install.js --list                 # show target dirs per tool/scope
+node bin/install.js --codex --user --verify
 node bin/install.js --all --user --uninstall
 # via helper (no clone):
+npx -y github:Rebel028/gauntlet --codex --user --verify
 npx -y github:Rebel028/gauntlet --all --uninstall
 ```
 
 Uninstall removes the `gauntlet-*` agent files and the `skills/gauntlet/` dir; other config is untouched.
+
+Verification is read-only. It hashes every expected installed file and reports `ok`, `missing`, or `modified`, exiting nonzero if anything differs. It verifies the files fetched by `npx`, not live agent dispatch or whether a running client has reloaded them. The GitHub command checks against the current repository revision; pin a release such as `github:Rebel028/gauntlet#v1.2.0` to verify against a specific version.
 
 ---
 
@@ -60,6 +64,7 @@ Uninstall removes the `gauntlet-*` agent files and the `skills/gauntlet/` dir; o
 | `--project` | install into the current repo only |
 | `--list` | show target dirs and exit |
 | `--dry-run` | print what would happen, write nothing |
+| `--verify` | compare installed files with this package; requires a tool flag or `--all` |
 | `--uninstall` | remove gauntlet files |
 | `--help` | usage |
 
